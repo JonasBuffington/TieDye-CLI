@@ -21,7 +21,7 @@ sorter:
   # The first rule that matches a file will be used.
   rules:
     - name: "Sort Images"
-      target_folder: "~/Pictures/Sorted Images"
+      target_folder: "C:/Users/jonas/Desktop/test_sorting_area/sorted_images"
       extensions:
         - ".jpg"
         - ".jpeg"
@@ -31,7 +31,7 @@ sorter:
         - ".webp"
 
     - name: "Sort Documents"
-      target_folder: "~/Documents/Sorted Documents"
+      target_folder: "C:/Users/jonas/Desktop/test_sorting_area/sorted_docs"
       extensions:
         - ".pdf"
         - ".docx"
