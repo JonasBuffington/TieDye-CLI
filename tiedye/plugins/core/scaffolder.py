@@ -11,6 +11,7 @@ import typer
 from pathlib import Path
 from typing import Dict, Any
 from tiedye.config_loader import load_config
+from tiedye.logging import log_event
 
 def save_template(
         config: Dict[str, Any],
@@ -52,6 +53,14 @@ def save_template(
             fg = typer.colors.GREEN
         )
         typer.echo(f"   -> Location: {template_dest_path}")
+
+        log_event(
+            "template_saved",
+            {
+                "template_name": template_name,
+                "source_path": str(source_path)
+            }
+        )
     except Exception as e:
         typer.secho(f"An error occured while saving the template: {e}", fg = typer.colors.RED)
 
@@ -96,6 +105,15 @@ def create_project(
             fg = typer.colors.GREEN
         )
         typer.echo(f"   -> Location: {project_dest_path}")
+
+        log_event(
+            "project_created",
+            {
+                "project_name": project_name,
+                "template_name": template_name,
+                "destination_path": str(project_dest_path)
+            }
+        )
     except Exception as e:
         typer.secho(f"An error occured while creating the project: {e}", fg = typer.colors.RED)
 

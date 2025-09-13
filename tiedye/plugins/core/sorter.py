@@ -6,9 +6,11 @@ This module contains the core logic for the file sorting feature.
 
 import os
 import shutil
+import typer
 from pathlib import Path
 from typing import Dict, Any
-import typer
+from tiedye.logging import log_event
+
 
 # --[ MODIFICATION START]
 # This is the fully refactored function using the two-pass approach
@@ -99,6 +101,15 @@ def sort_files(
       try:
         shutil.move(item_path, destination_path)
         typer.secho(f"[MOVED]   '{item_path.name}' -> '{target_folder.name}/'", fg = typer.colors.GREEN)
+
+        log_event(
+          "file_sorted",
+          {
+            "source": str(item_path),
+            "destination": str(destination_path),
+            "rule_name": matched_rule.get('name', 'Unnamed Rule')
+          }
+        )
       except PermissionError:
         typer.secho(f"[ERROR]   Permission denied to move '{item_path.name}'.", fg = typer.colors.RED)
       except Exception as e:
