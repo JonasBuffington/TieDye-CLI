@@ -8,10 +8,14 @@ It uses Typer to create a clean command-line interface.
 import typer
 import os
 from pathlib import Path
+
 from .config_loader import load_config
+
 from .plugins.core.sorter import sort_files
 from .plugins.core.scaffolder import save_template, create_project, list_templates, favorite_template, unfavorite_template
 from .plugins.core.path import save_path, remove_path, list_paths, get_path
+
+from .plugins.git_workflows.git_plugin import start_feature
 
 app = typer.Typer(
     help = "TieDye CLI: A tool for file sorting, project scaffolding, and workflow automation.",
@@ -189,6 +193,23 @@ def path_get(
     """
     config = load_config()
     get_path(config, name)
+
+git_app = typer.Typer(
+    help = "Commands to automate common Git workflows."
+)
+app.add_typer(git_app, name = "git")
+
+@git_app.command("start_feature")
+def git_start_feature(
+    name: str = typer.Argument(
+        ...,
+        help = "The name of the new feature branch (e.g., 'add-user-authentication')."
+    )
+):
+    """
+    Cheks out main, pulls latest, and creates a new feature branch.
+    """
+    start_feature(name)
 
 if __name__ == "__main__":
     app()
