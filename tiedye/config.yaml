@@ -15,7 +15,7 @@ sorter:
   collision_policy: "rename"
 
   # Whether to scan recursively into subdirectories of the source folder.
-  recursive_scan: true
+  recursive_scan: false
 
   # The core sorting rules. The tool will process these in order from top to bottom.
   # The first rule that matches a file will be used.
@@ -49,6 +49,8 @@ sorter:
 
 scaffolder:
   # The directory where all project templates will be stored.
-  # Using '~/.tiedye/templates' is a common convention for storing
-  # application data in a hidden folder within the user's home directory.
+
   templates_dir: "~/.tiedye/templates"
+
+   # The default directory where new projects will be created.
+  default_project_destination: "~/Desktop"

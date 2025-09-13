@@ -9,7 +9,7 @@ import typer
 from pathlib import Path
 from .core.config_loader import load_config
 from .core.sorter import sort_files
-from .core.scaffolder import save_template, create_project
+from .core.scaffolder import save_template, create_project, list_templates
 
 app = typer.Typer(
     help = "TieDye CLI: A tool for file sorting, project scaffolding, and workflow automation.",
@@ -86,6 +86,17 @@ def scaffold_new(
     try:
         config = load_config()
         create_project(config,  template, name)
+    except Exception as e:
+        typer.secho(f"An unexpected error occurred: {e}", fg = typer.colors.RED)
+
+@scaffold_app.command("list")
+def scaffold_list():
+    """
+    Lists all avaliable project templates.
+    """
+    try:
+        config = load_config()
+        list_templates(config)
     except Exception as e:
         typer.secho(f"An unexpected error occurred: {e}", fg = typer.colors.RED)
 

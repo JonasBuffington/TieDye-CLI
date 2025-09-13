@@ -8,6 +8,7 @@ import os
 import shutil
 from pathlib import Path
 from typing import Dict, Any
+import typer
 
 # --[ MODIFICATION START]
 # This is the fully refactored function using the two-pass approach
@@ -83,23 +84,23 @@ def sort_files(
       # --- Collision Handling ---
       if destination_path.exists():
         if collision_policy == 'skip':
-          print(f"Skipping '{item_path.name}', destination exists.")
+          typer.secho(f"[SKIPPED] '{item_path.name}' (destination exists)", fg = typer.colors.YELLOW)
           continue
         elif collision_policy == 'overwrite':
-          print(f"Overwriting '{destination_path}'.")
+          typer.secho(f"[OVERWRITING] '{destination_path}'", fg = typer.colors.YELLOW)
         elif collision_policy == 'rename':
           count = 1
           while destination_path.exists():
-            new_name = f"{item_path.stem}({count}){item_path.suffix}"
+            new_name = f"{item_path.stem} ({count}){item_path.suffix}"
             destination_path = target_folder / new_name
             count += 1
-          print(f"Renaming to '{destination_path.name}'.")
+          typer.secho(f"[RENAMING] to '{destination_path.name}'", fg = typer.colors.BLUE)
 
       # --- The Move Operation ---
       try:
         shutil.move(item_path, destination_path)
-        print(f"Moved: '{item_path.name}' -> '{target_folder}'")
+        typer.secho(f"[MOVED]   '{item_path.name}' -> '{target_folder.name}/'", fg = typer.colors.GREEN)
       except PermissionError:
-        print(f"Error: Permission denied to move '{item_path.name}'.")
+        typer.secho(f"[ERROR]   Permission denied to move '{item_path.name}'.", fg = typer.colors.RED)
       except Exception as e:
-        print(f"An unexpected error occurred while moving '{item_path.name}': {e}")
+        typer.secho(f"[ERROR]   An unexpected error occurred while moving '{item_path.name}:' {e}", fg = typer.colors.RED)
