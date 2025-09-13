@@ -23,7 +23,7 @@ def load_config():
         FileNotFoundError: if the config.yaml file cannot be found
     """
 
-    config_path = Path(__file__).parent.parent / "config.yaml"
+    config_path = Path(__file__).parent / "config.yaml"
 
     if not config_path.exists():
         raise FileNotFoundError(
