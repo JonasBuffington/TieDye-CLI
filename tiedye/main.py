@@ -229,6 +229,6 @@ def git_finish_feature():
     Opens a browser to create a pull request for the current branch.
     """
     finish_feature()
-
+    
 if __name__ == "__main__":
     app()
