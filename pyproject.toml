@@ -1,0 +1,13 @@
+# pyproject.toml
+
+[project]
+name = "tiedye-cli"
+version = "0.1.0"
+description = "A command-line tool for file sorting, project scaffolding, and workflow automation."
+dependencies = [
+    "typer[all]",
+    "pyyaml",
+]
+
+[project.scripts]
+tiedye = "tiedye.main:app"

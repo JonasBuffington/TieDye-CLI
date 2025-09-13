@@ -5,9 +5,12 @@ This module contains the core logic for the project scaffolding feature.
 """
 
 import shutil
+import yaml
+import typer
+
 from pathlib import Path
 from typing import Dict, Any
-import typer
+from tiedye.config_loader import load_config
 
 def save_template(
         config: Dict[str, Any],
@@ -104,6 +107,7 @@ def list_templates(
     """
     scaffolder_config = config.get('scaffolder', {})
     templates_dir_str = scaffolder_config.get('templates_dir')
+    favorites = scaffolder_config.get('favorites', [])
 
     if not templates_dir_str:
         typer.secho("Error: 'scaffolder.templates_dir' is not defined in config.yaml.", fg = typer.colors.RED)
@@ -118,9 +122,55 @@ def list_templates(
     templates = [item.name for item in templates_dir.iterdir() if item.is_dir()]
 
     if not templates:
-        typer.echo("No templates have been saved yet.")
-        return
+        typer.echo("No templates discovered in template directory.")
+
+    fav_templates = sorted([t for t in templates if t in favorites])
+    other_templates = sorted([t for t in templates if t not in favorites])
+
+    if fav_templates:
+        typer.secho("⭐ Favorite Templates:", bold = True, fg = typer.colors.YELLOW)
+        for template_name in fav_templates:
+            typer.secho(f"  - {template_name}", fg = typer.colors.YELLOW)
+
+    if other_templates:
+        typer.secho("Avaliable Templates:", bold = True)
+        for template_name in other_templates:
+            typer.echo(f"  - {template_name}")
+
+def _update_favorites(
+        op: str,
+        template_name: str
+):
+    """
+    A helper function to add or remove a favorite from the config.
+    """
+    config = load_config()
+    scaffolder_config = config.setdefault('scaffolder', {})
+    favorites = scaffolder_config.setdefault('favorites', [])
+
+    if op == "add" and template_name not in favorites:
+        favorites.append(template_name)
+    elif op == "remove" and template_name in favorites:
+        favorites.remove(template_name)
     
-    typer.secho("Avaliable Templates:", bold = True)
-    for template_name in sorted(templates):
-        typer.echo(f"  - {template_name}")
+    config_path = Path(__file__).parent.parent.parent / "config.yaml"
+    with open(config_path, 'w') as f:
+        yaml.dump(config, f, indent = 2, sort_keys = False)
+
+def favorite_template(
+        template_name: str
+):
+    """
+    Adds a template to the favorites list.
+    """
+    _update_favorites("add", template_name)
+    typer.secho(f"⭐ Marked '{template_name}' as a favorite.", fg = typer.colors.YELLOW)
+
+def unfavorite_template(
+        template_name: str
+):
+    """
+    Removes a template from the favorites list.
+    """
+    _update_favorites("remove", template_name)
+    typer.echo(f"Unmarked '{template_name}' as a favorite.")

@@ -25,7 +25,6 @@ def sort_files(
       config: The loaded configuration dictionary for the application.
       source_dir_str: The string path of the directory to scan.
   """
-
   # --- 1. Configuration and Path Setup ---
   sorter_config = config.get('sorter', {}) # (fall back to empty dictionary)
   if not sorter_config:
