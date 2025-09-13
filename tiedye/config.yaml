@@ -1,31 +1,57 @@
+# tiedye/config.yaml
+
+# This is the main configuration file for the TieDye CLI tool.
+# Settings for each module are nested under their own key.
+
 sorter:
-  default_source: ~/Downloads
-  collision_policy: rename
+  # Default source directory to scan if none is provided via the command line.
+  default_source: "~/Downloads"
+
+  # How to handle file name collisions when moving a file to a destination
+  # that already has a file with the same name.
+  # Valid options: "rename", "skip", "overwrite".
+  collision_policy: "rename"
+
+  # Whether to scan recursively into subdirectories of the source folder.
   recursive_scan: false
+
+  # The core sorting rules. The tool will process these in order from top to bottom.
+  # The first rule that matches a file will be used.
   rules:
-  - name: Sort Images
-    target_folder: C:/Users/jonas/Desktop/test_sorting_area/sorted_images
-    extensions:
-    - .jpg
-    - .jpeg
-    - .png
-    - .gif
-    - .heic
-    - .webp
-  - name: Sort Documents
-    target_folder: C:/Users/jonas/Desktop/test_sorting_area/sorted_docs
-    extensions:
-    - .pdf
-    - .docx
-    - .pptx
-    - .xlsx
-    - .txt
-    - .md
+    - name: "Sort Images"
+      target_folder: "C:/Users/jonas/Desktop/test_sorting_area/sorted_images"
+      extensions:
+        - ".jpg"
+        - ".jpeg"
+        - ".png"
+        - ".gif"
+        - ".heic"
+        - ".webp"
+
+    - name: "Sort Documents"
+      target_folder: "C:/Users/jonas/Desktop/test_sorting_area/sorted_docs"
+      extensions:
+        - ".pdf"
+        - ".docx"
+        - ".pptx"
+        - ".xlsx"
+        - ".txt"
+        - ".md"
+
+  # A list of file or folder names to explicitly ignore during a scan.
+  # This supports simple name matching for now.
   ignore_patterns:
-  - .DS_Store
-  - Thumbs.db
-  - __pycache__
+    - ".DS_Store"
+    - "Thumbs.db"
+    - "__pycache__"
+
 scaffolder:
-  templates_dir: ~/.tiedye/templates
-  default_project_destination: ~/Desktop
+  # The directory where all project templates will be stored.
+
+  templates_dir: "~/.tiedye/templates"
+
+  # The default directory where new projects will be created.
+  default_project_destination: "~/Desktop"
+
+  # User's favorited templates
   favorites: []
