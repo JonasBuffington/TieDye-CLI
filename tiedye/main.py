@@ -11,6 +11,7 @@ from pathlib import Path
 from .config_loader import load_config
 from .plugins.core.sorter import sort_files
 from .plugins.core.scaffolder import save_template, create_project, list_templates, favorite_template, unfavorite_template
+from .plugins.core.path import save_path, remove_path, list_paths, get_path
 
 app = typer.Typer(
     help = "TieDye CLI: A tool for file sorting, project scaffolding, and workflow automation.",
@@ -132,7 +133,62 @@ def scaffold_unfavorite(
     Removes a template from the favorites list.
     """
     unfavorite_template(name)
-    
+
+path_app = typer.Typer(
+    help = "Save and use shortcuts for frequently used directories."
+)
+app.add_typer(path_app, name = "path")
+
+@path_app.command("save")
+def path_save(
+    name: str = typer.Argument(
+        ...,
+        help = "The name of the shortcut."
+    ),
+    path: str = typer.Argument(
+        ...,
+        help = "The directory path to save. Use '.' for current directory."
+    )
+):
+    """
+    Saves a directory as a named shortcut.
+    """
+    if path == ".":
+        path = os.getcwd()
+    save_path(name, path)
+
+@path_app.command("remove")
+def path_remove(
+    name: str = typer.Argument(
+        ...,
+        help = "The name of the shortcut to remove."
+    )
+):
+    """
+    Removes a saved shortcut.
+    """
+    remove_path(name)
+
+@path_app.command("list")
+def path_list():
+    """
+    Lists all saved shortcuts.
+    """
+    config = load_config()
+    list_paths(config)
+
+@path_app.command("get")
+def path_get(
+    name: str = typer.Argument(
+        ...,
+        help = "The name of the shortcut to retrieve."
+    )
+):
+    """
+    Retrieves and prints a path for shell use. (internal use)
+    """
+    config = load_config()
+    get_path(config, name)
 
 if __name__ == "__main__":
     app()
