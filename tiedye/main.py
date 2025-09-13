@@ -9,12 +9,14 @@ import typer
 from pathlib import Path
 from .core.config_loader import load_config
 from .core.sorter import sort_files
+from .core.scaffolder import save_template, create_project
 
 app = typer.Typer(
     help = "TieDye CLI: A tool for file sorting, project scaffolding, and workflow automation.",
     no_args_is_help = True
 )
 
+# --- Sort Command ---
 @app.command("sort")
 def sort(
     source: str = typer.Argument(
@@ -40,9 +42,52 @@ def sort(
     except Exception as e:
         typer.secho(f"An unexpected error occured: {e}", fg = typer.colors.RED)
 
-@app.command("scaffold")
-def scaffold():
-    pass
+# --- Scaffolder Command Group ---
+scaffold_app = typer.Typer(
+    help = "Save and create new projects from templates."
+)
+
+app.add_typer(scaffold_app, name = "scaffold")
+
+@scaffold_app.command("save")
+def scaffold_save(
+    source: str = typer.Argument(
+        ...,
+        help = "The path to the source directory to save as a template."
+    ),
+    name: str = typer.Argument(
+        ...,
+        help = "The name to save the template as."
+    )
+):
+    """
+    Saves a directory structure as a reusable template.
+    """
+    try:
+        config = load_config()
+        save_template(config, name, source)
+    except Exception as e:
+        typer.secho(f"An unexpected error occurred: {e}", fg = typer.colors.RED)
+
+@scaffold_app.command("new")
+def scaffold_new(
+    template: str = typer.Argument(
+        ...,
+        help = "The name of the template to use."
+    ),
+    name: str = typer.Argument(
+        ...,
+        help = "The name of the new project directory to create."
+    )
+):
+    """
+    Creates a new project from a saved template.
+    """
+    try:
+        config = load_config()
+        create_project(config,  template, name)
+    except Exception as e:
+        typer.secho(f"An unexpected error occurred: {e}", fg = typer.colors.RED)
 
 if __name__ == "__main__":
     app()
