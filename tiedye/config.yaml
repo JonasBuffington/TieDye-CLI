@@ -46,3 +46,9 @@ sorter:
     - ".DS_Store"
     - "Thumbs.db"
     - "__pycache__"
+
+scaffolder:
+  # The directory where all project templates will be stored.
+  # Using '~/.tiedye/templates' is a common convention for storing
+  # application data in a hidden folder within the user's home directory.
+  templates_dir: "~/.tiedye/templates"
