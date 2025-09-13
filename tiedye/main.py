@@ -15,7 +15,7 @@ from .plugins.core.sorter import sort_files
 from .plugins.core.scaffolder import save_template, create_project, list_templates, favorite_template, unfavorite_template
 from .plugins.core.path import save_path, remove_path, list_paths, get_path
 
-from .plugins.git_workflows.git_plugin import start_feature
+from .plugins.git_workflows.git_plugin import start_feature, sync_work, finish_feature
 
 app = typer.Typer(
     help = "TieDye CLI: A tool for file sorting, project scaffolding, and workflow automation.",
@@ -199,7 +199,7 @@ git_app = typer.Typer(
 )
 app.add_typer(git_app, name = "git")
 
-@git_app.command("start_feature")
+@git_app.command("start-feature")
 def git_start_feature(
     name: str = typer.Argument(
         ...,
@@ -210,6 +210,25 @@ def git_start_feature(
     Cheks out main, pulls latest, and creates a new feature branch.
     """
     start_feature(name)
+
+@git_app.command("sync")
+def git_sync(
+    message: str = typer.Argument(
+        ...,
+        help = "The commit message for your changes."
+    )
+):
+    """
+    Adds all changes, commits them, and pushes to the remote branch.
+    """
+    sync_work(message)
+
+@git_app.command("finish-feature")
+def git_finish_feature():
+    """
+    Opens a browser to create a pull request for the current branch.
+    """
+    finish_feature()
 
 if __name__ == "__main__":
     app()

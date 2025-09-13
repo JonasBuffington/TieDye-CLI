@@ -6,6 +6,7 @@ This module contains the core logic for Git workflow automation.
 
 import subprocess
 import typer
+import shutil
 from typing import List
 
 def _run_command(command: List[str]):
@@ -60,3 +61,42 @@ def start_feature(branch_name: str):
     
     typer.secho(f"\n✅ Successfully created and pushed feature branch '{branch_name}'.", fg = typer.colors.GREEN)
     typer.echo("You are now on the new branch and ready to start coding.")
+
+def sync_work(commit_message: str):
+    """
+    Automates adding, committing, and pushing changes in the current branch.
+    """
+    typer.secho("🔃 Syncing work with remote repository...", bold = True)
+
+    commands = [
+        ["git", "add", "."],
+        ["git", "commit", "-m", commit_message],
+        ["git", "push"]
+    ]
+    
+    for cmd in commands:
+        if not _run_command(cmd):
+            typer.secho("\n🛑 Aborting sync due to an error.", fg = typer.colors.RED)
+            return
+    
+    typer.secho("\n✅ Successfully synced your changes.", fg = typer.colors.GREEN)
+
+def finish_feature():
+    """
+    Opens a web browser to create a pull request for the current branch.
+    Requires the GitHub CLI ('gh') to be installed.
+    """
+    typer.secho("🏁 Finishing feature and creating pull request...", bold = True)
+
+    if not shutil.which('gh'):
+        typer.secho("Error: GitHub CLI ('gh') not found.", fg = typer.colors.RED)
+        typer.echo("Please install it to use this feature. See: https://cli.github.com/")
+        return
+    
+    command = ["gh", "pr", "create", "--fill", "--web"]
+
+    if not _run_command(command):
+        typer.secho("\n🛑 Could not create pull request.", fg = typer.colors.RED)
+        return
+    
+    typer.secho("\n✅ Your browser has been opened to create the pull request.", fg = typer.colors.GREEN)
